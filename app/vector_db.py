@@ -6,7 +6,7 @@ from langchain_openai import OpenAIEmbeddings
 pc = Pinecone()
 index = pc.Index('langchain')
 
-def create_db(docs):
+def vectorStore():
     embeddings = OpenAIEmbeddings(
         model="text-embedding-3-small"
     )
@@ -14,5 +14,6 @@ def create_db(docs):
         embedding=embeddings,
         index=index
     )
-    vectorStore.add_documents(docs)
+    #vectorStore.add_documents(docs)
     return vectorStore
+

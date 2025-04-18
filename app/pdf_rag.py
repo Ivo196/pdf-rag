@@ -1,7 +1,8 @@
 import streamlit as st
-import ollama
-from app import chat_ai
-
+from chain import chat_ai
+from data import get_document_from_web, splitter, get_document_from_pdf
+from vector_db import vectorStore
+from PyPDF2 import PdfReader
 
 
 
@@ -23,7 +24,26 @@ st.sidebar.title("Upload your PDF file")
 
 
 #URL input 
-url = st.sidebar.text_input('Enter an URL', type='default')
+url = st.sidebar.text_input('Enter an URL', type='default', placeholder='https://es.wikipedia.org/wiki/Wifi')
+if url:
+    #add button to download URL data
+    if st.sidebar.button('Download data from URL', type='primary'):
+        docs = get_document_from_web(url=url)
+        split_docs = splitter(docs)
+        vectorStore = vectorStore().add_documents(split_docs)
+        st.sidebar.markdown(f'{len(split_docs)} chunks created')
+        st.sidebar.success('Data downloaded successfully')
+
+#PDF Input
+pdf_file = st.sidebar.file_uploader('Upload a PDF file', type='pdf')
+if pdf_file:
+    #add button to upload PDF file
+    if st.sidebar.button('Upload PDF file', type='primary'):
+        full_text = get_document_from_pdf(pdf_file)
+        split_docs = splitter(full_text)
+        vectorStore = vectorStore().add_documents(split_docs)
+        st.sidebar.markdown(f'{len(split_docs)} chunks created')
+        st.sidebar.success('Data uploaded successfully')
 
 #Chat interface
 st.header('Chat with your docs')
@@ -56,9 +76,8 @@ if user_input:
     response = chat_ai(user_input)
 
     #display assistan response
-    thinking_message.markdown(response['message']['content'])
+    thinking_message.markdown(response)
     
     #add assistant response to chat history
-    st.session_state.messages.append({'role':'assistant', 'content': response['message']['content']})
+    st.session_state.messages.append({'role':'assistant', 'content': response})
     print(st.session_state.messages)
-

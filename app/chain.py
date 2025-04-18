@@ -2,8 +2,11 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
+from vector_db import vectorStore
 
-def create_chain(vectorStore):
+
+
+def create_chain():
     model = ChatOpenAI(
         model="gpt-4o-mini",
         temperature=0.4,
@@ -22,10 +25,18 @@ def create_chain(vectorStore):
 
     )
 
-    retriever = vectorStore.as_retriever()
+    retriever = vectorStore().as_retriever()
     retrieval_chain = create_retrieval_chain(
         retriever,
         chain
     )
 
     return retrieval_chain
+
+def chat_ai(message):
+    
+    chain = create_chain()
+    response = chain.invoke({
+        'input': message
+    })
+    return(response['answer'])
