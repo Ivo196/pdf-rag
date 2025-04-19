@@ -14,9 +14,22 @@ def create_chain():
         )
     
     prompt = ChatPromptTemplate.from_template("""
-    Answer the user's question:
+    You are a helpful AI assistant that answers questions based on the provided context.
+    
     Context: {context}
-    Question: {input}                                        
+    
+    Instructions for using the context:
+    1. Carefully analyze the provided context to find relevant information
+    2. If the context contains the answer, use it directly
+    3. If the context doesn't contain enough information, say so clearly
+    4. If the context contains multiple relevant pieces, combine them coherently
+    5. Always cite specific parts of the context when possible
+    6. If the question is unclear or ambiguous, ask for clarification
+    
+    Question: {input}
+    
+    Please provide a clear, concise, and accurate answer based on the context above.
+    If you're unsure about any part of the answer, acknowledge the uncertainty.
     """)
 
     chain = create_stuff_documents_chain(
@@ -25,7 +38,7 @@ def create_chain():
 
     )
 
-    retriever = vectorStore().as_retriever()
+    retriever = vectorStore().as_retriever(search_kwargs={'k': 3})
     retrieval_chain = create_retrieval_chain(
         retriever,
         chain
