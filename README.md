@@ -27,7 +27,23 @@ git clone <repository-url>
 cd pdf-rag
 ```
 
-2. Create a virtual environment (recommended):
+2. Choose one of the following installation methods:
+
+### Method 1: Using Docker (Recommended)
+
+1. Make sure you have Docker installed on your system
+2. Build the Docker image:
+```bash
+docker build -t pdf-rag .
+```
+3. Run the container:
+```bash
+docker run -p 8501:8501 --env-file .env pdf-rag
+```
+
+### Method 2: Manual Installation
+
+1. Create a virtual environment (recommended):
 
 ```bash
 python -m venv venv
