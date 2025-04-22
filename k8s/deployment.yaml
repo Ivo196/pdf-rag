@@ -1,0 +1,37 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata: 
+  name: pdf-rag  # Nombre del deployment
+spec: 
+  replicas: 1  # Número de réplicas del pod
+  selector: 
+    matchLabels:
+      app: pdf-rag
+  template: 
+    metadata:
+      labels: 
+        app: pdf-rag  # Nombre del pod
+    spec:
+      containers:
+        - name: pdf-rag-container  # Nombre del contenedor dentro del pod
+          image: ivo196/pdf-rag:latest # Imagen del contenedor (local o dockerhub )
+          ports:  
+          - containerPort: 8501 # Puerto del contenedor (streamlit) 
+          imagePullPolicy: IfNotPresent # Evita volver a descargar la imagen si ya existe localmente
+          resources:
+            requests:
+              cpu: "250m"       # Cantidad mínima de CPU requerida
+              memory: "128Mi"   # Cantidad mínima de memoria requerida
+            limits:
+              cpu: "500m"       # Límite máximo de CPU
+              memory: "256Mi"   # Límite máximo de memoria
+          envFrom:
+            - secretRef:
+                name: pdf-rag
+              
+
+
+
+---
+
+
